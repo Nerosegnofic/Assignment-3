@@ -1,9 +1,12 @@
 // Class definition for XO game classes
-// Author:  Mohammad El-Ramly
+// Author:  Nour Aldeen, Ahmed Alaa, Ahmed Abdelnabi
 // Date:    10/10/2022
 // Version: 1
 #ifndef _BoardGame_CLASSES_H
 #define _BoardGame_CLASSES_H
+
+#include <bits/stdc++.h>
+
 using namespace std;
 
 class Board {
@@ -52,6 +55,39 @@ public:
     bool game_is_over();
 };
 
+class connectFourBoard: public Board {
+private:
+    int lst_x ,lst_y;
+    char lst_symbol;
+public:
+    connectFourBoard();
+    bool update_board(int x, int y, char mark);
+    void display_board();
+    bool is_winner();
+    bool is_draw();
+    bool game_is_over();
+
+};
+
+class FivexFive_Tic_Tac_Toe: public Board{
+public:
+    //initialize the board
+    FivexFive_Tic_Tac_Toe();
+    //check if entered position is withing the boundaries or not
+    bool update_board(int x, int y, char symbol) override;
+    //display the board
+    void display_board() override;
+    //winning condition
+    bool is_winner() override;
+    //count the number of three-in-a-rows
+    int count_threes(char symbol);
+    //draw condition
+    bool is_draw() override;
+    //game over
+    bool game_is_over() override;
+
+};
+
 ///////////////////////////////////////////
 // This class represents a player who has
 // a name and a symbol to put on board
@@ -82,10 +118,11 @@ class Player {
 // If invalid, game manager asks to regenerate
 class RandomPlayer: public Player {
     protected:
-        int dimension;
+        int first_dimension;
+        int second_dimension;
     public:
         // Take a symbol and pass it to parent
-        RandomPlayer (char symbol, int dimension);
+        RandomPlayer (char symbol, int first_dimension, int second_dimension);
         // Generate a random move
         void get_move(int& x, int& y);
 };

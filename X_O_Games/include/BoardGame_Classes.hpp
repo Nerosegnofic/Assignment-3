@@ -155,12 +155,4 @@ public:
     void run();
 };
 
-class SmartPlayer: public Player {
-protected:
-    Board *boardPtr;
-public:
-    SmartPlayer(char symbol);
-    void get_move(int &x, int &y);
-};
-
 #endif

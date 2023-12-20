@@ -15,12 +15,18 @@ connectFourBoard::connectFourBoard() {
 
 bool connectFourBoard::update_board(int x, int y, char mark) {
     // Only update if move is valid
-    bool isValid = (x == 5 || board[x + 1][y] != 0);
-    if (!(x < 0 || x > 5 || y < 0 || y > 6) && isValid && (board[x][y] == 0)) {
+
+    if (!(x < 0 || x > 5 || y < 0 || y > 6) && (board[x][y] == 0)) {
+        bool isValid = (x == 5 || board[x + 1][y] != 0);
+        if (isValid) {
+
         board[x][y] = toupper(mark);
         n_moves++;
         lst_x = x , lst_y = y ,lst_symbol = toupper(mark);
         return true;
+        } else {
+            return false;
+        }
     }
     else
         return false;
@@ -81,7 +87,7 @@ bool connectFourBoard::is_winner() {
         dist3:;
     }
 
-    for(int i = lst_x + min(5 - lst_x , lst_y) , j = lst_y - min(5 - lst_x , lst_y) ; i >= min(lst_x , 3) && j <= min(lst_y , 3) ; --i , ++j)
+    for(int i = lst_x + min(5 - lst_x , lst_y) , j = lst_y - min(5 - lst_x , lst_y) ; i >= max(lst_x , 3) && j <= min(lst_y , 3) ; --i , ++j)
     {
         for(int k{} ; k < 4 ; k++)
         {

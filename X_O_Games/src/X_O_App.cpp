@@ -141,7 +141,7 @@ void menu() {
                 players[1] = new RandomPlayer('o', 5, 5);
             }
 
-            GameManager FivexFive(new FivexFive_Tic_Tac_Toe(), players);
+            GameManager_5x5 FivexFive(new FivexFive_Tic_Tac_Toe(), players);
             FivexFive.run();
             cout << "Do you want to play a game again? (Y/N)" << endl;
             cin >> choice3;

@@ -1,5 +1,5 @@
 // Class definition for XO game classes
-// Author:  Nour Aldeen, Ahmed Alaa, Ahmed Abdelnabi
+// Author:  Nour aldeen, Ahmed Alaa, Ahmed Abdelnabi
 // Date:    16/12/2023
 // Version: 1
 #ifndef _BoardGame_CLASSES_H
@@ -144,6 +144,15 @@ class GameManager {
         //      If winner, declare so and end
         //      If draw, declare so and end
 
+};
+
+class GameManager_5x5{
+private:
+    Board* boardPtr;
+    Player* players[2];
+public:
+    GameManager_5x5(Board*, Player* playerPtr[2]);
+    void run();
 };
 
 class SmartPlayer: public Player {

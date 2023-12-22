@@ -85,8 +85,18 @@ public:
     bool is_draw() override;
     //game over
     bool game_is_over() override;
+    vector<vector<char>> getBoard();
+    int getRow(){
+        return n_rows;
+    }
+    int getCol(){
+        return n_cols;
+    }
+    int getMoves();
 
 };
+
+
 
 ///////////////////////////////////////////
 // This class represents a player who has
@@ -110,6 +120,17 @@ class Player {
         string to_string();
         // Get symbol used by player
         char get_symbol();
+};
+
+class AI_Player5x5 : public Player, FivexFive_Tic_Tac_Toe{
+protected:
+    FivexFive_Tic_Tac_Toe* boardptr;
+public:
+    AI_Player5x5(char symbol, FivexFive_Tic_Tac_Toe* board);
+    void get_move(int&x, int&y);
+    int minimax(vector<vector<char>> v, int depth, int alpha, int beta, bool computer_turn);
+    string getString(vector<vector<char>> t);
+
 };
 
 ///////////////////////////////////////////
@@ -148,11 +169,19 @@ class GameManager {
 
 class GameManager_5x5{
 private:
-    Board* boardPtr;
+    FivexFive_Tic_Tac_Toe* boardPtr;
     Player* players[2];
 public:
-    GameManager_5x5(Board*, Player* playerPtr[2]);
+    GameManager_5x5(FivexFive_Tic_Tac_Toe*, Player* playerPtr[2]);
     void run();
+};
+
+class SmartPlayer: public Player {
+protected:
+    Board *boardPtr;
+public:
+    SmartPlayer(char symbol);
+    void get_move(int &x, int &y);
 };
 
 #endif

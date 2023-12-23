@@ -24,11 +24,14 @@ void GameManager_5x5::run() {
 
         }
     }
-    if (boardPtr->is_winner()){
-        return;
-    }
+
     if (boardPtr->is_draw()){
         cout << "Draw!\n";
         return;
     }
+    if (boardPtr->is_winner()){
+        cout << players[0]->to_string() << " wins";
+    }
+    else
+        cout << players[1]->to_string() << " wins";
 }

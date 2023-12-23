@@ -1,15 +1,16 @@
-#include"../include/BoardGame_Classes.hpp"
+#include "../include/BoardGame_Classes.hpp"
 
 FivexFive_Tic_Tac_Toe::FivexFive_Tic_Tac_Toe() {
     n_rows = n_cols = 5;
     n_moves = 0;
-            board = new char*[n_rows];
+    board = new char*[n_rows];
     for (int i = 0; i < n_rows; i++) {
         board [i] = new char[n_cols];
         for (int j = 0; j < n_cols; j++)
             board[i][j] = 0;
     }
 }
+
 
 bool FivexFive_Tic_Tac_Toe::update_board(int x, int y, char symbol) {
     if(x < 0 || x > 5 || y < 0 || y > 5 || board[x][y] != 0)
@@ -38,95 +39,50 @@ int FivexFive_Tic_Tac_Toe::count_threes(char symbol) {
     //horizontal counting
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 3; ++j) {
-            bool flag = false;
-            int l = j, r = j+2;
-            if(board[i][l] != board[i][r])
-                continue;
-            l++;
-            while (l != r){
-                if(board[i][l] != board[i][r])
-                    break;
-                l++;
-                flag = true;
-            }
-            if(flag) {
-                if (board[i][r] == 'X')
+            if(board[i][j] == board[i][j+1] && board[i][j+1] == board[i][j+2]){
+                if(board[i][j] == 'X')
                     countX++;
-                if (board[i][r] == 'O')
+                if(board[i][j] == 'O')
                     countO++;
             }
+
         }
     }
     //vertical counting
-    for (int col = 0; col < 5; ++col) {
-        for (int row = 0; row < 3; ++row) {
-            bool flag = false;
-            int l=row, r=row+2;
-            if(board[l][col] != board[r][col])
-                continue;
-            l++;
-            while (l != r){
-                if(board[l][col] != board[r][col])
-                    break;
-                l++;
-                flag = true;
-            }
-            if(flag) {
-                if (board[r][col] == 'X')
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            if(board[i][j] == board[i+1][j] && board[i+1][j] == board[i+2][j]){
+                if(board[i][j] == 'X')
                     countX++;
-                if (board[r][col] == 'O')
+                if(board[i][j] == 'O')
                     countO++;
             }
+
         }
     }
 
     //diagonal counting
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 5; ++j) {
-            bool flag = false;
-            if(j < 2){ //right diagonals only
-                pair<int,int> l{i,j};
-                pair<int,int> r{i+2,j+2};
-                if(board[l.first][l.second] != board[r.first][r.second])
-                    break;
-                l.first++;
-                l.second++;
-                while (l != r){
-                    if(board[l.first][l.second] != board[r.first][r.second])
-                        break;
-                    l.first++;
-                    l.second++;
-                    flag = true;
-                }
-                if(flag){
-                    if(board[r.first][r.second] == 'X')
+
+            if(j <= 2){ //right diagonals only
+                if(board[i][j] == board[i+1][j+1] && board[i+1][j+1] == board[i+2][j+2]){
+                    if(board[i][j] == 'X')
                         countX++;
-                    else if(board[r.first][r.second] == 'O')
+                    if(board[i][j] == 'O')
                         countO++;
                 }
 
             }
-            flag = false;
+
             if(j >= 2){     //left diagonals
-                pair<int,int> l{i,j};
-                pair<int,int> r{i+2,j-2};
-                if(board[l.first][l.second] != board[r.first][r.second])
-                    break;
-                l.first++;
-                l.second--;
-                while (l != r){
-                    if(board[l.first][l.second] != board[r.first][r.second])
-                        break;
-                    l.first++;
-                    l.second--;
-                    flag = true;
-                }
-                if(flag){
-                    if(board[r.first][r.second] == 'X')
+                if(board[i][j] == board[i+1][j-1] && board[i+1][j-1] == board[i+1][j-2]){
+                    if(board[i][j] == 'X')
                         countX++;
-                    else if(board[r.first][r.second] == 'O')
+                    if(board[i][j] == 'O')
                         countO++;
                 }
+
             }
         }
     }
@@ -143,18 +99,13 @@ bool FivexFive_Tic_Tac_Toe::is_winner() {
     int ansX = count_threes('X');
     int ansO = count_threes('O');
     if(ansX > ansO){
-        cout << "Player 1 wins\n";
-        return true;
-    }
-    if(ansX < ansO){
-        cout << "Player 2 wins\n";
         return true;
     }
     return false;
 }
 
 bool FivexFive_Tic_Tac_Toe::is_draw() {
-    if(n_moves == 24 && !is_winner())
+    if(count_threes('x') == count_threes('o'))
         return true;
     return false;
 }

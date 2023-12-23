@@ -30,6 +30,12 @@ public:
    virtual void display_board() = 0;
    // Return true if game is over
    virtual bool game_is_over() = 0;
+   //returns number of rows
+   virtual int get_n_rows() = 0;
+   //returns number of cols
+   virtual int get_n_cols() = 0;
+   //returns the board
+   virtual vector<string> get_board() = 0;
 };
 
 ///////////////////////////////////////////
@@ -43,6 +49,38 @@ public:
    bool is_winner();
    bool is_draw();
    bool game_is_over();
+    int get_n_rows(){return n_rows;}
+    int get_n_cols(){return n_cols;}
+    vector<string>get_board(){
+        vector<string>ret(n_rows);
+        for(int i{}; i < n_rows; i++)
+            for(int j{}; j < n_cols; ++j)
+                ret[i].push_back(board[i][j]);
+        return ret;
+    }
+};
+
+// This class represents a player who has
+// a name and a symbol to put on board
+class Player {
+protected:
+    string name;
+    char symbol;
+public:
+    // Two constructors to initiate player
+    // Give player a symbol to use in playing
+    // It can be X or O or others
+    // Optionally, you can give him ID or order
+    // Like Player 1 and Player 2
+    Player (char symbol); // Needed for computer players
+    Player (int order, char symbol);
+    // Get desired move: x y (each between 0 and 2)
+    // Virtual (can change for other player types)
+    virtual void get_move(int& x, int& y);
+    // Give player info as a string
+    string to_string();
+    // Get symbol used by player
+    char get_symbol();
 };
 
 class Pyramic_X_O: public Board {
@@ -53,20 +91,68 @@ public:
     bool is_winner();
     bool is_draw();
     bool game_is_over();
+    int get_n_rows(){return n_rows;}
+    int get_n_cols(){return n_cols;}
+    vector<string>get_board(){
+        vector<string>ret(n_rows);
+        for(int i{}; i < n_rows; i++)
+            for(int j{}; j < n_cols; ++j)
+                ret[i].push_back(board[i][j]);
+        return ret;
+    }
 };
 
-class connectFourBoard: public Board {
-private:
-    int lst_x ,lst_y;
-    char lst_symbol;
+class AI_Pyramid_X_O_Player: public Player{
+protected:
+    Board* boardptr;
+
 public:
-    connectFourBoard();
-    bool update_board(int x, int y, char mark);
+    AI_Pyramid_X_O_Player(char symbol, Board* board);
+    void get_move(int&x , int& y, bool maximizer);
+    int minimax(vector<string>board,int depth, int alpha, int beta, bool maximizer);
+    string board_to_string(vector<string>board);
+    void get_move(int& x, int& y) ;
+    ~AI_Pyramid_X_O_Player(){
+        delete boardptr;
+    }
+
+};
+
+// This class represents a 6 x 7 board
+// used in collect_four game
+class connectFourBoard:public Board {
+    int lst_x, lst_y, lst_symbol;
+public:
+    connectFourBoard ();
+    bool update_board (int x, int y, char mark);
     void display_board();
     bool is_winner();
     bool is_draw();
     bool game_is_over();
+    int get_n_rows(){return n_rows;}
+    int get_n_cols(){return n_cols;}
+    vector<string>get_board(){
+        vector<string>ret(n_rows);
+        for(int i{}; i < n_rows; i++)
+            for(int j{}; j < n_cols; ++j)
+                ret[i].push_back(board[i][j]);
+        return ret;
+    }
+};
 
+class AI_Player: public Player{
+protected:
+    Board* boardptr;
+
+public:
+    AI_Player(char symbol , Board* board);
+    void get_move(int&x , int& y, bool maximizer);
+    int minimax(vector<string>board,int depth, int alpha, int beta, bool maximizer);
+    string board_to_string(vector<string>board);
+    void get_move(int& x, int& y) ;
+    ~AI_Player(){
+        delete boardptr;
+    }
 };
 
 class FivexFive_Tic_Tac_Toe: public Board{
@@ -85,51 +171,38 @@ public:
     bool is_draw() override;
     //game over
     bool game_is_over() override;
-    vector<vector<char>> getBoard();
-    int getRow(){
+    int get_n_rows(){
         return n_rows;
     }
-    int getCol(){
+    int get_n_cols(){
         return n_cols;
     }
-    int getMoves();
+    vector<string> get_board(){
+        vector<string>ret(n_rows);
+        for(int i{}; i < n_rows; i++)
+            for(int j{}; j < n_cols; ++j)
+                ret[i].push_back(board[i][j]);
+        return ret;
+    };
+
 
 };
 
 
 
 ///////////////////////////////////////////
-// This class represents a player who has
-// a name and a symbol to put on board
-class Player {
-    protected:
-        string name;
-        char symbol;
-    public:
-        // Two constructors to initiate player
-        // Give player a symbol to use in playing
-        // It can be X or O or others
-        // Optionally, you can give him ID or order
-        // Like Player 1 and Player 2
-        Player (char symbol); // Needed for computer players
-        Player (int order, char symbol);
-        // Get desired move: x y (each between 0 and 2)
-        // Virtual (can change for other player types)
-        virtual void get_move(int& x, int& y);
-        // Give player info as a string
-        string to_string();
-        // Get symbol used by player
-        char get_symbol();
-};
 
-class AI_Player5x5 : public Player, FivexFive_Tic_Tac_Toe{
+class AI_Player5x5 : public Player{
 protected:
-    FivexFive_Tic_Tac_Toe* boardptr;
+    Board* boardptr;
 public:
-    AI_Player5x5(char symbol, FivexFive_Tic_Tac_Toe* board);
+    AI_Player5x5(char symbol, Board* board);
     void get_move(int&x, int&y);
-    int minimax(vector<vector<char>> v, int depth, int alpha, int beta, bool computer_turn);
-    string getString(vector<vector<char>> t);
+    int minimax(vector<string> v, int depth, int alpha, int beta, bool computer_turn);
+    string getString(vector<string> t);
+    ~AI_Player5x5(){
+        delete boardptr;
+    }
 
 };
 
@@ -165,23 +238,19 @@ class GameManager {
         //      If winner, declare so and end
         //      If draw, declare so and end
 
+
 };
 
 class GameManager_5x5{
 private:
-    FivexFive_Tic_Tac_Toe* boardPtr;
+    Board* boardPtr;
     Player* players[2];
 public:
-    GameManager_5x5(FivexFive_Tic_Tac_Toe*, Player* playerPtr[2]);
+    GameManager_5x5(Board*, Player* playerPtr[2]);
     void run();
+
 };
 
-class SmartPlayer: public Player {
-protected:
-    Board *boardPtr;
-public:
-    SmartPlayer(char symbol);
-    void get_move(int &x, int &y);
-};
+
 
 #endif

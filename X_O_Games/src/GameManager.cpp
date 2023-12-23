@@ -1,3 +1,7 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 // Class definition for XO_GameManager class
 // Author:  Mohammad El-Ramly
 // Date:    10/10/2022

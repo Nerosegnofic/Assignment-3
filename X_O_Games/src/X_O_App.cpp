@@ -1,3 +1,7 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 // Class definition for XO_App class
 // Author:  Mohammad El-Ramly
 // Date:    10/10/2022
@@ -26,7 +30,7 @@ void menu() {
         cout << "Invalid Input. Try again" << endl;
         cin >> game_choice;
     }
-
+    Board* object;
     switch (game_choice) {
         case 1: {
             int choice1, choice2;
@@ -70,14 +74,19 @@ void menu() {
             cout << "Welcome to FCAI Pyramic X-O Game. :)\n";
             cout << "Press 1 if you want to play with computer: ";
             cin >> choice1;
+            object = new Pyramic_X_O();
             if (choice1 != 1) {
                 players[1] = new Player(2, 'o');
             } else {
-                //Player pointer points to child
-                players[1] = new RandomPlayer('o', 3, 5);
+                cout << "easy version (1) or hard (2)\n";
+                cin >> choice2;
+                if(choice2 == 1)
+                    players[1] = new RandomPlayer('o',3,5);
+                else
+                    players[1] = new AI_Pyramid_X_O_Player('o',object);
             }
 
-            GameManager pyramic_x_o_game(new Pyramic_X_O(), players);
+            GameManager pyramic_x_o_game(object, players);
             pyramic_x_o_game.run();
             cout << "Do you want to play a game again? (Y/N)" << endl;
             cin >> choice3;
@@ -102,14 +111,19 @@ void menu() {
             cout << "Welcome to FCAI Connect Four Game. :)\n";
             cout << "Press 1 if you want to play with computer: ";
             cin >> choice1;
+            object = new connectFourBoard();
             if (choice1 != 1) {
                 players[1] = new Player(2, 'o');
             } else {
-                //Player pointer points to child
-                players[1] = new RandomPlayer('o', 6, 7);
+                cout << "easy version (1) or hard (2)\n";
+                cin >> choice2;
+                if(choice2 == 1)
+                    players[1] = new RandomPlayer('o',6,7);
+                else
+                    players[1] = new AI_Player('o',object);
             }
 
-            GameManager connect_four (new connectFourBoard(), players);
+            GameManager connect_four (object, players);
             connect_four.run();
             cout << "Do you want to play a game again? (Y/N)" << endl;
             cin >> choice3;
@@ -134,14 +148,20 @@ void menu() {
             cout << "Welcome to FCAI 5x5 X-O Game. :)\n";
             cout << "Press 1 if you want to play with computer: ";
             cin >> choice1;
+            object = new FivexFive_Tic_Tac_Toe();
             if (choice1 != 1) {
                 players[1] = new Player(2, 'o');
             } else {
-                //Player pointer points to child
-                players[1] = new RandomPlayer('o', 5, 5);
+                cout << "easy version (1) or hard (2)\n";
+                cin >> choice2;
+                if(choice2 == 1)
+                    players[1] = new RandomPlayer('o',5,5);
+                else
+                    players[1] = new AI_Player5x5('o', object);
             }
 
-            GameManager_5x5 FivexFive(new FivexFive_Tic_Tac_Toe(), players);
+            GameManager_5x5 FivexFive(object, players);
+            cout << object->get_n_cols();
             FivexFive.run();
             cout << "Do you want to play a game again? (Y/N)" << endl;
             cin >> choice3;

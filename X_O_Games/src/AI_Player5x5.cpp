@@ -1,12 +1,7 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
-
 #include "../include/BoardGame_Classes.hpp"
 #include <bits/stdc++.h>
 using namespace std;
 
-int idx1,idx2;
 map <string,int> dp;
 
 AI_Player5x5::AI_Player5x5(char symbol, Board* board) : Player(symbol)
@@ -36,7 +31,7 @@ string AI_Player5x5::getString(vector<string> t) {
  * the difference, this will help the computer to predict and estimate
  * the best move possible according to the information it got.
  */
-int evaluatingFunction(vector<string> Board, bool maximizing_player){
+int evaluatingFunction(vector<string> Board){
 
     //calculating x's and o's winning conditions
     int countX = 0, countO = 0;
@@ -70,7 +65,7 @@ int evaluatingFunction(vector<string> Board, bool maximizing_player){
             }
 
             //three-in-a-row counting
-            if(Board[i][j] == Board[i][j+1] && Board[i][j+1] == Board[i][j+2]){
+            else if(Board[i][j] == Board[i][j+1] && Board[i][j+1] == Board[i][j+2]){
                 if(Board[i][j] == 'X')
                     countX+=12;
                 if(Board[i][j] == 'O')
@@ -118,8 +113,8 @@ int evaluatingFunction(vector<string> Board, bool maximizing_player){
                         countO++;
                 }
             }
-            //three in a row counting
-            if (Board[i][j] == Board[i + 1][j] && Board[i + 1][j] == Board[i + 2][j]) {
+                //three in a row counting
+            else if (Board[i][j] == Board[i + 1][j] && Board[i + 1][j] == Board[i + 2][j]) {
                 if (Board[i][j] == 'X')
                     countX += 12;
                 if (Board[i][j] == 'O')
@@ -168,8 +163,8 @@ int evaluatingFunction(vector<string> Board, bool maximizing_player){
                             countO++;
                     }
                 }
-                //three in a row
-                if(Board[i][j] == Board[i+1][j+1] && Board[i+1][j+1] == Board[i+2][j+2]){
+                    //three in a row
+                else if(Board[i][j] == Board[i+1][j+1] && Board[i+1][j+1] == Board[i+2][j+2]){
                     if(Board[i][j] == 'X')
                         countX+=12;
                     if(Board[i][j] == 'O')
@@ -217,7 +212,7 @@ int evaluatingFunction(vector<string> Board, bool maximizing_player){
                     }
                 }
                 //three in a row
-                if(Board[i][j] == Board[i+1][j-1] && Board[i+1][j-1] == Board[i+2][j-2]){
+                else if(Board[i][j] == Board[i+1][j-1] && Board[i+1][j-1] == Board[i+2][j-2]){
                     if(Board[i][j] == 'X')
                         countX+=12;
                     if(Board[i][j] == 'O')
@@ -239,17 +234,14 @@ int evaluatingFunction(vector<string> Board, bool maximizing_player){
             }
         }
     }
-    if(maximizing_player)
-        return countO - countX;
-    else
-        return countX-countO;
+    return countO - countX;
 }
 int AI_Player5x5::minimax(vector<string> v, int depth, int alpha, int beta, bool computer_turn) {
     string s = getString(v);
     if(depth == 0){
-        return dp[s] = evaluatingFunction(v, computer_turn);
+        return evaluatingFunction(v);
     }
-    if(dp.count(s))
+    if(dp.find(s) != dp.end())
         return dp[s];
 
     if(computer_turn){
@@ -260,11 +252,7 @@ int AI_Player5x5::minimax(vector<string> v, int depth, int alpha, int beta, bool
                     v[i][j] = 'O';
                     int nextEval = minimax(v,depth-1,alpha,beta,false);
                     v[i][j] = 0;
-                    if(nextEval > maxEvaluation) {
-                        maxEvaluation = nextEval;
-                        idx1 = i;
-                        idx2 = j;
-                    }
+                    maxEvaluation = max(nextEval,maxEvaluation);
                     alpha = max(alpha,maxEvaluation);
                     if(alpha >= beta){
                         break;
@@ -283,8 +271,7 @@ int AI_Player5x5::minimax(vector<string> v, int depth, int alpha, int beta, bool
             for (int j = 0; j < boardptr->get_n_cols(); ++j) {
                 if(!v[i][j]) {
                     v[i][j] = 'X';
-                    string s = getString(v);
-                    int nextEval = minimax(v, depth - 1, alpha, beta, true);
+                    int nextEval = minimax(v,depth-1,alpha,beta,true);
                     v[i][j] = 0;
                     minEvaluation = min(nextEval, minEvaluation);
                     beta = min(beta, minEvaluation);
@@ -303,6 +290,38 @@ void AI_Player5x5::get_move(int &x, int &y) {
     vector<string> temp_board(boardptr->get_n_rows());
 
     temp_board = boardptr->get_board();
+    for (int i = 0; i < boardptr->get_n_rows(); ++i) {
+        for (int j = 0; j < boardptr->get_n_cols(); ++j) {
+            if(!temp_board[i][j]){
+                temp_board[i][j] = 'O';
+                int nextScore = minimax(temp_board,7,alpha,beta,false);
+                if(nextScore > max_eval){
+                    max_eval = nextScore;
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+    }
 
 }
 
+//    for(int col{}; col < 7; ++col)
+//    {
+//        if(board[0][col])
+//            continue;
+//        for(int row{n_rows - 1}; ~row; --row) {
+//            if (!board[row][col]) {
+//                temp_board[row][col] = 'o';
+//                int next_score = 0; // next_score = minmax();
+//                if (next_score > max_score) {
+//                    max_score = next_score;
+//                    x = row;
+//                    y = col;
+//                }
+//                alpha = max(alpha, max_score);
+//                temp_board[row][col] = 0;
+//                break;
+//            }
+//        }
+//    }

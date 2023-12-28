@@ -105,7 +105,7 @@ bool FivexFive_Tic_Tac_Toe::is_winner() {
 }
 
 bool FivexFive_Tic_Tac_Toe::is_draw() {
-    if(count_threes('x') == count_threes('o'))
+    if(count_threes('X') == count_threes('O'))
         return true;
     return false;
 }

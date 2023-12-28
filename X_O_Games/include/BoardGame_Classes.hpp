@@ -94,28 +94,24 @@ public:
     int get_n_rows(){return n_rows;}
     int get_n_cols(){return n_cols;}
     vector<string>get_board(){
-        vector<string>ret(n_rows);
-        for(int i{}; i < n_rows; i++)
-            for(int j{}; j < n_cols; ++j)
+        vector<string>ret(1);
+        for(int i{}; i < 1; i++)
+            for(int j{}; j < 9; ++j)
                 ret[i].push_back(board[i][j]);
         return ret;
     }
 };
 
-class AI_Pyramid_X_O_Player: public Player{
+class AI_Pyramid_X_O_Player: public Pyramic_X_O, public Player {
 protected:
-    Board* boardptr;
+    Pyramic_X_O *boardptr;
 
 public:
-    AI_Pyramid_X_O_Player(char symbol, Board* board);
-    void get_move(int&x , int& y, bool maximizer);
-    int minimax(vector<string>board,int depth, int alpha, int beta, bool maximizer);
+    AI_Pyramid_X_O_Player(char symbol, Pyramic_X_O *board);
+    void get_move(int &x, int &y, bool maximizer);
+    int minimax(vector<string> board, int depth, int alpha, int beta, bool maximizer);
     string board_to_string(vector<string>board);
-    void get_move(int& x, int& y) ;
-    ~AI_Pyramid_X_O_Player(){
-        delete boardptr;
-    }
-
+    void get_move(int &x, int &y);
 };
 
 // This class represents a 6 x 7 board
@@ -140,19 +136,16 @@ public:
     }
 };
 
-class AI_Player: public Player{
+class AI_Player: public Player, public connectFourBoard{
 protected:
-    Board* boardptr;
+    connectFourBoard *boardptr;
 
 public:
-    AI_Player(char symbol , Board* board);
+    AI_Player(char symbol , connectFourBoard *board);
     void get_move(int&x , int& y, bool maximizer);
     int minimax(vector<string>board,int depth, int alpha, int beta, bool maximizer);
     string board_to_string(vector<string>board);
-    void get_move(int& x, int& y) ;
-    ~AI_Player(){
-        delete boardptr;
-    }
+    void get_move(int& x, int& y);
 };
 
 class FivexFive_Tic_Tac_Toe: public Board{

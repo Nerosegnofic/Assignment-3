@@ -187,7 +187,7 @@ int evaluate( vector<string> board, char player) {
     return score;
 }
 
-AI_Player::AI_Player(char symbol, Board* board) :Player(symbol)
+AI_Player::AI_Player(char symbol, connectFourBoard *board) :Player(symbol)
 {
     this->name = "AI  Player";
     cout << "My names is " << name << endl;
@@ -204,7 +204,7 @@ string AI_Player::board_to_string(vector<string>board) {
 map<string, int> dp1;
 int xx{};
 int AI_Player::minimax(vector<string>board,int depth, int alpha, int beta, bool maximizer) {
-    cout<<xx<<'\n';
+//    cout<<xx<<'\n';
     string state = board_to_string(board);
 //        cout << depth<<' '<<alpha<<' '<<beta<<' '<<maximizer<<' '<<state<<' '<< evaluate(board, maximizer? 'X' : 'O')<<'\n';
     if(dp1.find(state) != dp1.end()) {

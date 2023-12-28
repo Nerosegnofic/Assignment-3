@@ -84,8 +84,7 @@ bool Pyramic_X_O::game_is_over() {
     return n_moves >= 9;
 }
 
-AI_Pyramid_X_O_Player::AI_Pyramid_X_O_Player(char symbol, Board* board) : Player(symbol)
-{
+AI_Pyramid_X_O_Player::AI_Pyramid_X_O_Player(char symbol, Pyramic_X_O *board) : Player(symbol) {
     this->name = "AI  Player";
     cout << "My names is " << name << endl;
     boardptr = board;
@@ -96,64 +95,86 @@ string AI_Pyramid_X_O_Player::board_to_string(vector<string>board) {
 
     for(int i{}; i < boardptr->get_n_rows(); ++i)
         for(int j{}; j < boardptr->get_n_cols(); ++j)
-            ret += (!board[i][j])? '_':board[i][j];
+            ret += (board[i][j] == ' ')? '_':board[i][j];
     return ret;
 
 }
 map<string, int>dp2;
+int abc = 0;
 
 int AI_Pyramid_X_O_Player::minimax(vector<string>board,int depth, int alpha, int beta, bool maximizer) {
-
+    ++abc;
+//    cout << abc << endl;
     string state = board_to_string(board);
-//        cout << depth<<' '<<alpha<<' '<<beta<<' '<<maximizer<<' '<<state<<' '<< evaluate(board, maximizer? 'X' : 'O')<<'\n';
+//        cout << depth<<' '<<alpha<<' '<<beta<<' '<<maximizer<<' '<<state<<' '<< '\n' << flush;
     if(dp2.find(state) != dp2.end()) {
         return dp2[state];
     }
-    if(!depth)
-    {
 
+//    cout << board[0] << endl;
+
+    // Check for diagonals
+    if ((board[0][0] == board[0][1] && board[0][1] == board[0][4] && (board[0][0] != ' ' && board[0][1] != ' ' && board[0][4] != ' ')) || (board[0][0] == board[0][3] && board[0][3] == board[0][8]) && (board[0][0] != ' ' && board[0][3] != ' ' && board[0][8] != ' ')) {
+        cout << 1 << endl;
+        if (maximizer) {
+            return -1000 + depth;
+        } else {
+            return 1000 + depth;
+        }
+
+        // Check for horizontals
+    } else if ((board[0][1] == board[0][2] && board[0][2] == board[0][3] && (board[0][1] != ' ' && board[0][2] != ' ' && board[0][3] != ' ')) || ((board[0][4] == board[0][5] && board[0][5] == board[0][6]) && (board[0][4] != ' ' && board[0][5] != ' ' && board[0][6] != ' ')) || (board[0][6] == board[0][7] && board[0][7] == board[0][8]) && (board[0][6] != ' ' && board[0][7] != ' ' && board[0][8] != ' ')  || (board[0][5] == board[0][6] && board[0][6] == board[0][7]) && (board[0][5] != ' ' && board[0][6] != ' ' && board[0][7] != ' ')) {
+        cout << 2 << endl;
+        if (maximizer) {
+            return -1000 + depth;
+        } else {
+            return 1000 + depth;
+        }
+        // Check for verticals
+    } else if ((board[0][0] == board[0][2] && board[0][2] == board[0][6]) && (board[0][0] != ' ' && board[0][2] != ' ' && board[0][6] != ' ')) {
+        cout << 3 << endl;
+        if (maximizer) {
+            return -1000 + depth;
+        } else {
+            return 1000 + depth;
+        }
     }
+
+    if (!depth) {
+        return 0;
+    }
+
 
     if(maximizer)
     {
         int max_value{-(int)1e9};
-        for(int i{}; i < boardptr->get_n_rows(); ++i)
-        {
-            for(int j{}; j < boardptr->get_n_cols(); ++j)
+        for(int j {}; j < 9; ++j) {
+            if(board[0][j] == ' ')
             {
-                if(!board[i][j])
-                {
-                    vector<string> temp_board = board;  // Create a deep copy
-                    temp_board[i][j] = 'O';
-                    int value = minimax(temp_board,depth - 1, alpha, beta, 0);
-                    max_value = max(value , max_value);
-                    alpha = max(alpha, value);
-//                  board[i][j] = 0;
-                    if(beta <= alpha)
-                        break;
-                }
-
+                vector<string> temp_board = board;  // Create a deep copy
+                temp_board[0][j] = 'O';
+                int value = minimax(temp_board,depth - 1, alpha, beta, 0);
+                max_value = max(value , max_value);
+                alpha = max(alpha, value);
+                if(beta <= alpha)
+                    break;
             }
+
         }
         return dp2[state] = max_value;
     }
     else
     {
         int min_value{(int)1e9};
-        for(int i{}; i < boardptr->get_n_rows(); ++i)
-        {
-            for(int j{}; j < boardptr->get_n_cols(); ++j)
-            {
-                if(!board[i][j])
-                {
-                    vector<string> temp_board = board;  // Create a deep copy
-                    temp_board[i][j] = 'X';
-                    int value = minimax(temp_board,depth - 1, alpha, beta, 1);
-                    min_value = min(value , min_value);
-                    beta = min(beta, value);
-                    if(beta <= alpha)
-                        break;
-                }
+        for(int j {}; j < 9; ++j) {
+            if(board[0][j] == ' ') {
+                vector<string> temp_board = board;  // Create a deep copy
+                temp_board[0][j] = 'X';
+                int value = minimax(temp_board,depth - 1, alpha, beta, 1);
+                min_value = min(value , min_value);
+                beta = min(beta, value);
+                if(beta <= alpha)
+                    break;
             }
         }
         return dp2[state] = min_value;
@@ -162,35 +183,60 @@ int AI_Pyramid_X_O_Player::minimax(vector<string>board,int depth, int alpha, int
 
 void AI_Pyramid_X_O_Player::get_move(int &x, int &y, bool maximizer) {
 
+
     int max_eval = -(int)1e9;
     char symbol = (maximizer)? 'O' : 'X';
     vector<string>temp_board = boardptr->get_board();
 
+//    cout << temp_board[0] << endl;
 //  for(auto i : dp2)cout<<i.first<<' '<<i.second<<'\n';
-    for(int i{}; i < boardptr->get_n_rows(); ++i)
-    {
-        for(int j{}; j < boardptr->get_n_cols(); ++j)
-        {
-//            cout << max_eval<<'\n';
-            if(!temp_board[i][j] ){
-                temp_board[i][j] = 'O';
-                int score = minimax(temp_board ,7,-1e9,1e9,false);
+    for(int j {}; j < 9; ++j) {
+//        cout << x << " " << y << endl;
+//        cout << max_eval<<'\n';
+        if(temp_board[0][j] == ' '){
+            temp_board[0][j] = 'O';
+            int score = minimax(temp_board ,8,-1e9,1e9,false);
 //                cout << score<<'\n';
-                temp_board[i][j] = 0;
-                if(score > max_eval){
-                    max_eval = score;
-                    x = i;
-                    y = j;
+            temp_board[0][j] = ' ';
+            if(score > max_eval){
+                max_eval = score;
+
+                if (j == 0) {
+                    x = y = 0;
+                } else if (j == 1) {
+                    x = 1;
+                    y = 0;
+                } else if (j == 2) {
+                    x = y = 1;
+                } else if (j == 3) {
+                    x = 1;
+                    y = 2;
+
+                } else if (j == 4) {
+                    x = 2;
+                    y = 0;
+
+                } else if (j == 5) {
+                    x = 2;
+                    y = 1;
+
+                } else if (j == 6) {
+                    x = y = 2;
+
+                } else if (j == 7) {
+                    x = 2;
+                    y = 3;
+
+                } else if (j == 8) {
+                    x = 2;
+                    y = 4;
                 }
             }
-
         }
     }
-
 }
 
 void AI_Pyramid_X_O_Player::get_move(int &x, int &y) {
     get_move(x, y , 1);
-
 }
 

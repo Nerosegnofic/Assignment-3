@@ -74,7 +74,7 @@ void menu() {
             cout << "Welcome to FCAI Pyramic X-O Game. :)\n";
             cout << "Press 1 if you want to play with computer: ";
             cin >> choice1;
-            object = new Pyramic_X_O();
+            Pyramic_X_O *object = new Pyramic_X_O();
             if (choice1 != 1) {
                 players[1] = new Player(2, 'o');
             } else {
@@ -83,7 +83,7 @@ void menu() {
                 if(choice2 == 1)
                     players[1] = new RandomPlayer('o',3,5);
                 else
-                    players[1] = new AI_Pyramid_X_O_Player('o',object);
+                    players[1] = new AI_Pyramid_X_O_Player('o', object);
             }
 
             GameManager pyramic_x_o_game(object, players);
@@ -111,7 +111,7 @@ void menu() {
             cout << "Welcome to FCAI Connect Four Game. :)\n";
             cout << "Press 1 if you want to play with computer: ";
             cin >> choice1;
-            object = new connectFourBoard();
+            connectFourBoard *object = new connectFourBoard();
             if (choice1 != 1) {
                 players[1] = new Player(2, 'o');
             } else {

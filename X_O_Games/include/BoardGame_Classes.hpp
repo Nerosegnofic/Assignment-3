@@ -193,6 +193,7 @@ public:
     void get_move(int&x, int&y);
     int minimax(vector<string> v, int depth, int alpha, int beta, bool computer_turn);
     string getString(vector<string> t);
+    int evaluatingFunction(vector<string>& Board, bool maximizer);
     ~AI_Player5x5(){
         delete boardptr;
     }

@@ -1,4 +1,4 @@
-#include "../include/BoardGame_Classes.hpp"
+#include "BoardGame_Classes.hpp"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -31,11 +31,19 @@ string AI_Player5x5::getString(vector<string> t) {
  * the difference, this will help the computer to predict and estimate
  * the best move possible according to the information it got.
  */
-int evaluatingFunction(vector<string> Board){
+int AI_Player5x5::evaluatingFunction(vector<string>& Board, bool maximizer){
 
     //calculating x's and o's winning conditions
     int countX = 0, countO = 0;
-
+    if(boardptr->game_is_over()){
+        if(boardptr->is_draw())
+            return 0;
+        if(boardptr->is_winner()){
+            return 1000;
+        }
+        else
+            return -1000;
+    }
     //horizontal counting
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 3; ++j) {
@@ -234,12 +242,12 @@ int evaluatingFunction(vector<string> Board){
             }
         }
     }
-    return countO - countX;
+    return maximizer ? -(countX - countO) : -(countO - countX);
 }
-int AI_Player5x5::minimax(vector<string> v, int depth, int alpha, int beta, bool computer_turn) {
+int AI_Player5x5::minimax(vector<string> &v, int depth, int alpha, int beta, bool computer_turn) {
     string s = getString(v);
     if(depth == 0){
-        return evaluatingFunction(v);
+        return evaluatingFunction(v, computer_turn);
     }
     if(dp.find(s) != dp.end())
         return dp[s];
@@ -294,34 +302,16 @@ void AI_Player5x5::get_move(int &x, int &y) {
         for (int j = 0; j < boardptr->get_n_cols(); ++j) {
             if(!temp_board[i][j]){
                 temp_board[i][j] = 'O';
-                int nextScore = minimax(temp_board,7,alpha,beta,false);
+                int nextScore = minimax(temp_board,5,alpha,beta,false);
                 if(nextScore > max_eval){
                     max_eval = nextScore;
                     x = i;
                     y = j;
                 }
+                temp_board[i][j] = 0;
             }
         }
     }
 
 }
 
-//    for(int col{}; col < 7; ++col)
-//    {
-//        if(board[0][col])
-//            continue;
-//        for(int row{n_rows - 1}; ~row; --row) {
-//            if (!board[row][col]) {
-//                temp_board[row][col] = 'o';
-//                int next_score = 0; // next_score = minmax();
-//                if (next_score > max_score) {
-//                    max_score = next_score;
-//                    x = row;
-//                    y = col;
-//                }
-//                alpha = max(alpha, max_score);
-//                temp_board[row][col] = 0;
-//                break;
-//            }
-//        }
-//    }
